@@ -1,7 +1,10 @@
 <?php
 
+use App\Http\Controllers\AdminQueueController;
+use App\Http\Controllers\BookingController;
+use App\Http\Controllers\PublicCatalogController;
+use App\Http\Controllers\QueueController;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
@@ -23,6 +26,16 @@ Route::get('/health', function (): JsonResponse {
     }
 });
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+Route::get('/services', [PublicCatalogController::class, 'services']);
+Route::get('/barbers', [PublicCatalogController::class, 'barbers']);
+Route::get('/slots', [PublicCatalogController::class, 'slots']);
+Route::get('/queue', [QueueController::class, 'index']);
+Route::post('/bookings', [BookingController::class, 'store']);
+Route::post('/queue/join', [QueueController::class, 'join']);
+
+Route::prefix('admin')->middleware('supabase.admin')->group(function (): void {
+    Route::get('/me', [AdminQueueController::class, 'me']);
+    Route::get('/queue', [AdminQueueController::class, 'queue']);
+    Route::patch('/appointments/{appointment}/status', [AdminQueueController::class, 'updateAppointmentStatus']);
+    Route::patch('/barbers/{barber}/status', [AdminQueueController::class, 'updateBarberStatus']);
+});

@@ -11,6 +11,7 @@ class Appointment extends Model
     protected $fillable = [
         'customer_id',
         'barber_id',
+        'service_id',
         'service_type',
         'scheduled_time',
         'queue_position',
@@ -31,6 +32,11 @@ class Appointment extends Model
     public function barber(): BelongsTo
     {
         return $this->belongsTo(Barber::class);
+    }
+
+    public function service(): BelongsTo
+    {
+        return $this->belongsTo(Service::class);
     }
 
     public function queueLogs(): HasMany
